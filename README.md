@@ -22,7 +22,7 @@ All backend code follows [PEP8 style guidelines](https://www.python.org/dev/peps
 
   
 
-Developers using this project should already have Python3, pip, node, npm or yarn on their local machines.
+Developers using this project should already have Postgres (psql), python3, pip, node and npm or yarn on their local machines.
 
   
 
@@ -50,23 +50,33 @@ By default, the frontend will run on http://127.0.0.1:3000
 
   
 
-From the backend folder run **pip install requirements.txt** . All required packages are included in the requirements file.
+From the backend folder run **pip install -r requirements.txt** . All required packages are included in the requirements file.
 
   
+First you need to initiate the database with the following commands:
+
+
+```
+psql postgres < setup.sql
+psql trivia < trivia.psql
+```
+
 
 To run the backend application run the following commands:
 
   
-
-**export FLASK_APP=flaskr
+```
+export FLASK_APP=flaskr
 
 export FLASK_ENV=development
 
-flask run**
+flask run
+```
 
   
 
 The commands put the application in development and directs our application to use the __init__.py file in our flaskr folder. Working in development shows an interactive devugger in the console and restarts the server whenever changes are made.
+
 
   
 
@@ -84,15 +94,19 @@ The backend application is running on http://127.0.0.1:5000/ by default and is a
 
 In order to run the tests navigate to the backend folder and run the following commands:
 
-  
+(Assuming you have already initated the database as described in the backend part)
 
-**dropdb trivia_test
+```
+
+
+dropdb trivia_test
 
 createdb trivia_test
 
 psql trivia_test < trivia.psql
 
-python test_flaskr.py**
+python test_flaskr.py
+```
 
   
 
@@ -308,7 +322,7 @@ This endpoint either creates a new question or returns search results.
 
 - - Creates a new question using JSON request parameters.
 
-- - Returns JSON object with newly created question, as well as paginated questions.
+- - Returns JSON object with newly created question.
 
   
 
@@ -317,85 +331,11 @@ Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: applicat
             "answer": "Michigan",
             "difficulty": 3,
             "category": "3"
-        }'`<br>
+        }'`
 
         {
-            "created": 173, 
-            "question_created": "Which US state contains an area known as the Upper Penninsula?", 
-            "questions": [
-                {
-                    "answer": "Apollo 13", 
-                    "category": 5, 
-                    "difficulty": 4, 
-                    "id": 2, 
-                    "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-                }, 
-                {
-                    "answer": "Tom Cruise", 
-                    "category": 5, 
-                    "difficulty": 4, 
-                    "id": 4, 
-                    "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
-                }, 
-                {
-                    "answer": "Muhammad Ali", 
-                    "category": 4, 
-                    "difficulty": 1, 
-                    "id": 9, 
-                    "question": "What boxer's original name is Cassius Clay?"
-                }, 
-                {
-                    "answer": "Brazil", 
-                    "category": 6, 
-                    "difficulty": 3, 
-                    "id": 10, 
-                    "question": "Which is the only team to play in every soccer World Cup tournament?"
-                }, 
-                {
-                    "answer": "Uruguay", 
-                    "category": 6, 
-                    "difficulty": 4, 
-                    "id": 11, 
-                    "question": "Which country won the first ever soccer World Cup in 1930?"
-                }, 
-                {
-                    "answer": "George Washington Carver", 
-                    "category": 4, 
-                    "difficulty": 2, 
-                    "id": 12, 
-                    "question": "Who invented Peanut Butter?"
-                }, 
-                {
-                    "answer": "Lake Victoria", 
-                    "category": 3, 
-                    "difficulty": 2, 
-                    "id": 13, 
-                    "question": "What is the largest lake in Africa?"
-                }, 
-                {
-                    "answer": "The Palace of Versailles", 
-                    "category": 3, 
-                    "difficulty": 3, 
-                    "id": 14, 
-                    "question": "In which royal palace would you find the Hall of Mirrors?"
-                }, 
-                {
-                    "answer": "Agra", 
-                    "category": 3, 
-                    "difficulty": 2, 
-                    "id": 15, 
-                    "question": "The Taj Mahal is located in which Indian city?"
-                }, 
-                {
-                    "answer": "Escher", 
-                    "category": 2, 
-                    "difficulty": 1, 
-                    "id": 16, 
-                    "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
-                }
-            ], 
-            "success": true, 
-            "total_questions": 20
+            "created": 25,
+            "success": True,
         }
 
   
@@ -528,8 +468,9 @@ Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: applicat
 
 - - Returns JSON object with random question not among previous questions.
 
-* Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [20, 21],
-                                            "quiz_category": {"type": "Science", "id": "1"}}'`<br>
+* Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [20, 21], "quiz_category": {"type": "Science", "id": "1"}}'`
+
+        <br>
 
         {
             "question": {
