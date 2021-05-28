@@ -2,6 +2,7 @@ import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
+from flask import jsonify
 
 from flaskr import create_app
 from models import setup_db, Question, Category
@@ -18,7 +19,12 @@ class TriviaTestCase(unittest.TestCase):
         self.database_path = "postgres://{}:{}@{}/{}".format('felizer', 'felizer','localhost:5432', self.database_name)
         # self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
-
+        self.new_question = {
+              "answer": "Brazil", 
+              "category": 6, 
+              "difficulty": 3,
+              "question": "Which is the only team to play in every soccer World Cup tournament?"
+          }
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -38,7 +44,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_get_categories(self):
         res = self.client().get("/categories")
         data = json.loads(res.data)
-
+        
         self.assertEqual(res.status_code, 200)
         self.assertTrue(len(data['categories']))
     
@@ -61,10 +67,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Resource not found')
 
     def test_delete_question(self):
-        res = self.client().delete("/questions/22")
+        res = self.client().delete("/questions/5")
         data = json.loads(res.data)
 
-        question = Question.query.get(4)
+        question = Question.query.get(5)
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
@@ -81,8 +87,15 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_create_question(self):
         res = self.client().post('/questions', json=self.new_question)
+        print(self.new_question)
         data = json.loads(res.data)
 
+        question = Question.query.get(data['created'])
+        
+        self.assertEqual(question.category, self.new_question['category'])
+        self.assertEqual(question.question, self.new_question['question'])
+        self.assertEqual(question.answer, self.new_question['answer'])
+        self.assertEqual(question.difficulty, self.new_question['difficulty'])
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['success'])
     
